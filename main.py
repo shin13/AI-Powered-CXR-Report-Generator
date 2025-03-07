@@ -1,32 +1,19 @@
-from fastapi import FastAPI, HTTPException, File, UploadFile
-from fastapi.responses import JSONResponse
-import pandas as pd
 import logging
-from typing import Union
-from fastapi.middleware.cors import CORSMiddleware
-from requests import post
-from requests.exceptions import RequestException
-from app.middleware.exception import exception_message
+from openai import OpenAI
 import json
 from typing import Union
-import io
-
-import os
-from openai import OpenAI
-import subprocess
-import time
+from fastapi import FastAPI, HTTPException, File, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.middleware.exception import exception_message
 from app.middleware.logger import setup_logger
 from app.services.ai_model import extract_features, get_predictions
 from app.services.report_generator import generate_complete_report
-
-from icecream import ic
-
-client = OpenAI(api_key=settings.OPENAI_API_KEY)
+from app.services.file_service import read_upload_file, save_report
 
 setup_logger()
+client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
 app = FastAPI()
 
@@ -52,8 +39,8 @@ async def process_image(file: UploadFile = File(...)) -> dict:
         JSON response with analysis results
     """
     try:
-        # Read the uploaded file content
-        image_content = await file.read()
+        # Use file service to read and validate the uploaded file
+        image_content = await read_upload_file(file)
         logging.info(f"Received image: {file.filename}, size: {len(image_content)} bytes")
         
         # Extract features using the AI model service
@@ -67,14 +54,23 @@ async def process_image(file: UploadFile = File(...)) -> dict:
         # Generate the report from predictions
         predictions_json = json.dumps(predictions)
         response = await generate_complete_report(predictions_json)
-        
+        logging.info("Report generated successfully")
+
         if response is None:
             raise HTTPException(status_code=500, detail="Failed to get response from ChatGPT API")
         
+        # Use file service to save the report
+        save_report(file.filename, response)
+
         return response
+    
+    except ValueError as e:
+        # Handle validation errors
+        logging.error(f"Validation error: {exception_message(e)}")
+        raise HTTPException(status_code=400, detail=exception_message(e))
     except Exception as e:
         logging.error(exception_message(e))
-        raise HTTPException(status_code=500, detail=f"Image processing failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Image processing failed: {exception_message(e)}")
 
 @app.post("/extract_features/")
 async def extract_features_endpoint(file: UploadFile = File(...)) -> dict:
@@ -93,7 +89,7 @@ async def extract_features_endpoint(file: UploadFile = File(...)) -> dict:
         return {"features": features, "dimensions": len(features)}
     except Exception as e:
         logging.error(exception_message(e))
-        raise HTTPException(status_code=500, detail=f"Feature extraction failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Feature extraction failed: {exception_message(e)}")
 
 @app.post("/generate_from_features/")
 async def generate_from_features(features: list) -> dict:
@@ -119,7 +115,7 @@ async def generate_from_features(features: list) -> dict:
         return response
     except Exception as e:
         logging.error(exception_message(e))
-        raise HTTPException(status_code=500, detail=f"Report generation failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Report generation failed: {exception_message(e)}")
 
 @app.post("/upload_csv/")
 async def upload_csv(data: dict) -> Union[dict, str]:
@@ -140,7 +136,7 @@ async def upload_csv(data: dict) -> Union[dict, str]:
         return response
     except Exception as e:
         logging.error(exception_message(e))
-        raise HTTPException(status_code=500, detail=f"An error occurred while processing the file: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"An error occurred while processing the file: {exception_message(e)}")
 
 
 if __name__ == "__main__":
