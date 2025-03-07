@@ -45,6 +45,7 @@ cover/
 # Environments
 .env
 .env.*
+!.env.example
 .venv
 env/
 venv/
@@ -93,11 +94,11 @@ credentials.json
 
 # Data files and samples
 # Uncomment if you want to ignore sample images
-# *.jpg
-# *.jpeg
-# *.png
+*.jpg
+*.jpeg
+*.png
 # Uncomment if you don't want to version large datasets
-# *.csv 
+*.csv 
 
 # Documentation
 docs/_build/
