@@ -1,9 +1,9 @@
 import logging
 from openai import OpenAI
 import json
-from typing import Union
 from fastapi import FastAPI, HTTPException, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
 from app.config import settings
 from app.middleware.exception import exception_message
@@ -14,13 +14,12 @@ from app.services.file_service import read_upload_file, save_report
 
 setup_logger()
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
-
-app = FastAPI()
+app = FastAPI(debug=settings.DEBUG)
 
 # CORS middleware setup to allow requests from specified origins
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost"],
+    allow_origins=settings.ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=['*'],
     allow_headers=['*']
@@ -117,54 +116,17 @@ async def generate_from_features(features: list) -> dict:
         logging.error(exception_message(e))
         raise HTTPException(status_code=500, detail=f"Report generation failed: {exception_message(e)}")
 
-@app.post("/upload_csv/")
-async def upload_csv(data: dict) -> Union[dict, str]:
-    """Process JSON data from CSV and generate a report (legacy endpoint)"""
-    # Keep your existing implementation, but perhaps add a deprecation warning in logs
-    logging.info("Using legacy CSV upload endpoint")
-
-    try:
-        json_data = data['data']
-        logging.info(f"Received file size: {len(json_data)} bytes")
-        
-        # Generate the report using the new service
-        response = await generate_complete_report(json_data)
-        
-        if response is None:
-            raise HTTPException(status_code=500, detail="Failed to get response from ChatGPT API")
-        
-        return response
-    except Exception as e:
-        logging.error(exception_message(e))
-        raise HTTPException(status_code=500, detail=f"An error occurred while processing the file: {exception_message(e)}")
-
-
 if __name__ == "__main__":
     import uvicorn
+    
+    # Log startup information
+    logging.info(f"Starting application in {os.getenv('ENVIRONMENT', 'development')} mode")
+    logging.info(f"Debug mode: {settings.DEBUG}")
+    logging.info(f"Allowed origins: {settings.ALLOWED_ORIGINS}")
+    
     uvicorn.run(
         "main:app",
-        host="127.0.0.1",
-        port=7890,
-        reload=True,
+        host=settings.HOST,
+        port=settings.PORT,
+        reload=settings.DEBUG,
     )
-
-    # import subprocess
-    # import time
-
-    # # Start FastAPI
-    # fastapi_process = subprocess.Popen([
-    #     "uvicorn", "main:app", "--host", "127.0.0.1", "--port", "7890", "--reload"
-    # ])
-
-    # # Start Streamlit
-    # streamlit_process = subprocess.Popen([
-    #     "streamlit", "run", "app/app.py"
-    # ])
-
-    # # Keep the script running
-    # try:
-    #     while True:
-    #         time.sleep(2)
-    # except KeyboardInterrupt:
-    #     fastapi_process.terminate()
-    #     streamlit_process.terminate()

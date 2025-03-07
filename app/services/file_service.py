@@ -5,12 +5,11 @@ import os
 import json
 import logging
 import datetime
-from io import BytesIO
 from typing import Dict, List, Tuple, Any
 
-import pandas as pd
 from fastapi import UploadFile
 
+from app.config import settings
 from app.middleware.exception import exception_message
 from app.middleware.logger import setup_logger
 
@@ -18,10 +17,10 @@ from app.middleware.logger import setup_logger
 setup_logger()
 
 # Define constants
-REPORTS_DIR = "reports"
+REPORTS_DIR = settings.REPORTS_DIR
+MAX_IMAGE_SIZE_MB = settings.MAX_IMAGE_SIZE_MB
 ALLOWED_IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png"]
 ALLOWED_CSV_EXTENSION = ".csv"
-MAX_IMAGE_SIZE_MB = 10  # Maximum allowed image size in MB
 
 def ensure_directory_exists(directory_path: str) -> None:
     """
@@ -97,54 +96,6 @@ def validate_image_file(filename: str, file_content: bytes) -> None:
         raise ValueError("The file does not appear to be a valid image")
     
     logging.debug(f"[file_service] Image file validated: {filename}")
-
-def parse_csv_to_dataframe(file_content: bytes) -> pd.DataFrame:
-    """
-    Parse CSV file content to a pandas DataFrame
-    
-    Args:
-        file_content: CSV file content as bytes
-        
-    Returns:
-        Pandas DataFrame with the CSV data
-        
-    Raises:
-        ValueError: If CSV parsing fails
-    """
-    try:
-        df = pd.read_csv(BytesIO(file_content))
-        logging.info(f"[file_service] CSV parsed successfully: {len(df)} rows, {len(df.columns)} columns")
-        return df
-    except Exception as e:
-        error_msg = f"Error parsing CSV file: {exception_message(e)}"
-        logging.error(f"[file_service] {error_msg}")
-        raise ValueError(error_msg)
-
-def dataframe_to_json(df: pd.DataFrame) -> str:
-    """
-    Convert a DataFrame to JSON string
-    
-    Args:
-        df: Pandas DataFrame
-        
-    Returns:
-        JSON string representation
-        
-    Raises:
-        ValueError: If conversion fails
-    """
-    try:
-        # Ensure we're converting to a list of records
-        records = df.to_dict('records')
-        json_data = json.dumps(records)
-        logging.debug(f"[file_service] DataFrame converted to JSON: {len(json_data)} bytes")
-        # Add extra debugging
-        logging.debug(f"[file_service] First few records: {records[:2]}")
-        return json_data
-    except Exception as e:
-        error_msg = f"Error converting DataFrame to JSON: {exception_message(e)}"
-        logging.error(f"[file_service] {error_msg}")
-        raise ValueError(error_msg)
 
 def save_report(data_name: str, report_content: str) -> Tuple[str, str]:
     """

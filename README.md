@@ -1,57 +1,113 @@
-# Demo Web App
+# AI-Powered CXR Report Generator
 
-[English](./README.md)    [中文](README_ZH.md)
+[English](./README.md) | [中文](README_ZH.md)
 
-This application allows users to submit a Linear Probe Result, analyzed through the [AI Model Website](https://aiotplatform.ndmctsgh.edu.tw/service-website). It automatically generates a corresponding CXR report, which users can copy, download, or print.
+A web application that automatically generates structured radiological reports from chest X-ray (CXR) images using AI analysis. The application provides a simple interface for uploading images and receiving detailed, medically accurate reports.
 
-## Usage
+## Features
 
-### Step 1: Clone the Project
+- **Direct Image Analysis**: Upload chest X-ray images in JPG/JPEG format for immediate processing
+- **AI-Powered Report Generation**: Advanced AI models analyze images and generate structured reports
+- **Medical Terminology**: Reports use standard radiological terminology and formatting
+- **Save & Export**: Save generated reports for future reference
+- **Responsive Design**: User-friendly interface that works on desktop and tablet devices
 
-Clone this project to your local machine:
+## Getting Started
 
-```bash
-git clone <YOUR_CLONED_URL>
-```
+### Prerequisites
 
-For example:
+- Python 3.8 or higher
+- pip (Python package installer)
 
-```bash
-git clone https://github.com/shin13/AI-generated-CXR-report-assistant.git
-```
+### Installation
 
-If you need to specify a directory, add a path parameter:
+1. **Clone the Repository**
 
-```bash
-git clone https://github.com/shin13/AI-generated-CXR-report-assistant.git <YOUR_FOLDER_NAME>
-```
+   ```bash
+   git clone https://github.com/shin13/AI-Powered-CXR-Report-Generator.git
+   cd AI-Powered-CXR-Report-Generator
+   ```
 
-### Step 2: Install Required Packages
+2. **Install Required Packages**
 
-Install the necessary packages:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-```bash
-pip install -r requirements.txt
-```
+3. **Configure Environment Variables**
 
-### Step 3: Set Up Environment Variables
+   Create a `.env` file in the project root with the following variables:
 
-Create a `.env` file and set the following environment variables:
+   ```bash
+   # API Settings
+   OPENAI_API_KEY=your-openai-key-here
+   CHATGPT_MODEL=gpt-4o-mini
+   
+   # Backend Settings
+   BACKEND_URL=http://localhost:7890
+   
+   # AI Service Settings
+   BASE_URL_AI=https://your-ai-service-url.com/api
+   CXR_FEATURES_ENDPOINT=/v1/cxr/features
+   CXR_LINEAR_PROBE_ENDPOINT=/v1/cxr/linear-probe
+   AUTH_USERNAME=your_username
+   AUTH_PASSWORD=your_password
+   ```
 
-- `AI_MODEL_URL`: URL of the AI model (OpenAI or DeepSeek)
-- `API_KEY`: API key for the AI model (OpenAI or DeepSeek)
-- `MODEL_NAME`: Name of the model (e.g., GPT-3, DeepSeek)
+### Running the Application
 
-### Step 4: Launch the Application
-
-Start the application:
+Launch the application with a single command:
 
 ```bash
 python main.py
 ```
 
-This will start the FastAPI and Streamlit applications.
+This will start both the FastAPI backend server and the Streamlit frontend application. The application will be accessible at:
 
-### Step 5: Generate the AI Report
+- **Frontend**: http://localhost:8501
+- **Backend API**: http://localhost:7890
 
-Select an example file and click the submit button to generate the AI report.
+## Usage Guide
+
+1. **Access the Application**
+   - Open your browser and navigate to http://localhost:8501
+
+2. **Upload an Image**
+   - Click the "Upload your CXR image file (jpg)" button
+   - Select a valid chest X-ray image from your device
+
+3. **Generate Report**
+   - Click the "Submit" button to process the image
+   - Wait for the AI to analyze the image and generate a report
+
+4. **View and Save Report**
+   - The generated report will appear in the "Report (draft)" section
+   - View the report in Markdown or Text format
+   - Previous reports can be accessed through the "Recent Reports" dropdown
+
+## Project Structure
+
+```bash
+AI-Powered-CXR-Report-Generator/
+├── app/                    # Frontend and service components
+│   ├── app.py              # Streamlit frontend application
+│   ├── config.py           # Configuration settings
+│   ├── data/               # Data and model information
+│   ├── middleware/         # Error handling and logging
+│   ├── services/           # Service layer components
+│   └── static/             # Static assets
+├── logs/                   # Application logs
+├── reports/                # Generated reports
+├── main.py                 # FastAPI backend application
+├── requirements.txt        # Python dependencies
+└── README.md               # Project documentation
+```
+
+## License
+
+[MIT License](LICENSE)
+
+## Acknowledgments
+
+- This project uses the OpenAI API for language processing
+- Streamlit and FastAPI for the application framework
