@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import asyncio
 import aiohttp
 import json
 import logging
-from typing import Dict, List, Any, Union, Optional
+from typing import Dict, List, Any
 
 from app.config import settings
 from app.middleware.exception import exception_message

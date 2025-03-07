@@ -5,8 +5,8 @@ import os
 import json
 import logging
 import datetime
-from io import BytesIO, StringIO
-from typing import Dict, List, Tuple, Union, Any, BinaryIO
+from io import BytesIO
+from typing import Dict, List, Tuple, Any
 
 import pandas as pd
 from fastapi import UploadFile
