@@ -1,21 +1,35 @@
 # ./app/app.py
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+Streamlit frontend for the AI-Powered CXR Report Generator.
+This application allows users to upload chest X-ray images or CSV files
+and generates structured radiological reports using AI.
+"""
+
 import os
 import json
 import time
 import logging
-import datetime
-from io import StringIO, BytesIO
+import asyncio
+from typing import Optional
 
 import streamlit as st
-import pandas as pd
 import aiohttp
-import asyncio
-from icecream import ic
 
-from config import settings
-from middleware.exception import exception_message
-from middleware.logger import setup_logger
-
+# Use absolute imports to ensure consistency
+from app.config import settings
+from app.middleware.exception import exception_message
+from app.middleware.logger import setup_logger
+# Import services
+from app.services.file_service import (
+    read_upload_file, 
+    validate_image_file,
+    parse_csv_to_dataframe, 
+    dataframe_to_json,
+    save_report,
+    get_recent_reports
+)
 
 # Set up logging for debugging and monitoring
 setup_logger()
@@ -51,156 +65,237 @@ missing_files = [name for name, path in example_files.items() if not os.path.exi
 if missing_files:
     st.warning(f"The following example files were not found: {', '.join(missing_files)}")
 
-# --- Asynchronous Functions ---
+# --- Backend API Communication Functions ---
 
-async def get_image_features(image_bytes: bytes) -> dict:
-    """Send image to CXR_FEATURES_URL and return a 512-dimensional feature array."""
-    async with aiohttp.ClientSession() as session:
-        form = aiohttp.FormData()
-        form.add_field('file', image_bytes, filename='image.jpg', content_type='image/jpeg')
-        async with session.post(settings.CXR_FEATURES_URL, data=form) as response:
-            if response.status == 200:
-                features = await response.json()
-                logging.info(f"[APP] Features retrieved: {len(features)} dimensions")
-                logging.info(f"[APP] Features: \n{features}")
-                return features
-            else:
-                error_msg = f"Failed to get features: {response.status}"
-                logging.error(f"[APP] {error_msg}")
-                raise Exception(error_msg)
-
-async def get_image_analysis(features: dict) -> dict:
-    """Send feature array to CXR_AI_MODEL_URL and return JSON analysis result."""
-    async with aiohttp.ClientSession() as session:
-        async with session.post(settings.CXR_AI_MODEL_URL, json=features) as response:
-            logging.info(f"[APP] Analysis response: {response.text}")
-            if response.status == 200:
-                analysis = await response.json()
-                logging.info(f"[APP] Analysis result: {analysis}")
-                return analysis
-            else:
-                error_msg = f"Failed to get analysis: {response.status}"
-                logging.error(f"[APP] {error_msg}")
-                raise Exception(error_msg)
-
-async def generate_report(json_data: str) -> str:
-    """Send JSON data to the backend API and retrieve the generated report."""
-    async with aiohttp.ClientSession() as session:
-        payload = {'data': json_data}
-        async with session.post(settings.BACKEND_URL, json=payload) as response:
-            logging.info(f"[APP] Response from backend API: {response}")
-            if response.status == 200:
+async def process_image_via_backend(image_content: bytes, filename: str) -> str:
+    """
+    Send image directly to the backend process_image endpoint to generate a report.
+    
+    Args:
+        image_content: Raw image bytes
+        filename: Original filename for logging
+        
+    Returns:
+        Generated report content
+        
+    Raises:
+        Exception: If processing fails
+    """
+    try:
+        logging.info(f"[APP] Sending image to backend: {filename} ({len(image_content)} bytes)")
+        
+        async with aiohttp.ClientSession() as session:
+            # Prepare the form data with the image file
+            form = aiohttp.FormData()
+            form.add_field('file', image_content, filename=filename, content_type='image/jpeg')
+            
+            # Send to the backend's process_image endpoint
+            async with session.post(f"{settings.BACKEND_URL}/process_image/", data=form) as response:
+                logging.info(f"[APP] Backend response status: {response.status}")
+                
+                if response.status != 200:
+                    error_text = await response.text()
+                    raise Exception(f"Backend processing failed: {response.status} - {error_text}")
+                
+                # Parse the response
                 response_data = await response.json()
-                logging.info(f"[APP] Response data (STRING): {response_data}")
-                response_data = json.loads(response_data)
-                logging.info(f"[APP] Response data (JSON): {response_data}")
-                report_content = response_data["choices"][0]["message"]["content"]
-                logging.info(f"[APP] Report content: {report_content}")
+                logging.debug(f"[APP] Response data: {response_data[:200]}...")
+                
+                # The response is a JSON string, so we need to parse it
+                response_obj = json.loads(response_data)
+                report_content = response_obj["choices"][0]["message"]["content"]
+                logging.info(f"[APP] Report content received: {len(report_content)} characters")
+                
                 return report_content
-            else:
-                error_detail = await response.text()
-                error_msg = f"Failed to generate report: {response.status} - {error_detail}"
-                logging.error(f"[APP] {error_msg}")
-                raise Exception(error_msg)
+    except aiohttp.ClientError as e:
+        error_msg = f"Communication error with backend: {exception_message(e)}"
+        logging.error(f"[APP] {error_msg}")
+        raise Exception(error_msg)
+    except Exception as e:
+        error_msg = f"Error processing image via backend: {exception_message(e)}"
+        logging.error(f"[APP] {error_msg}")
+        raise Exception(error_msg)
+    
+async def process_csv_via_backend(json_data: str) -> str:
+    """
+    Send CSV data as JSON to the backend to generate a report.
+    
+    Args:
+        json_data: JSON string representation of the CSV data
+        
+    Returns:
+        Generated report content
+        
+    Raises:
+        Exception: If processing fails
+    """
+    try:
+        logging.info(f"[APP] Sending JSON data to backend: {len(json_data)} bytes")
+        
+        async with aiohttp.ClientSession() as session:
+            # Prepare the payload with the JSON data
+            payload = {'data': json_data}
+            
+            # Send to the backend's upload_csv endpoint
+            async with session.post(f"{settings.BACKEND_URL}/upload_csv/", json=payload) as response:
+                logging.info(f"[APP] Backend response status: {response.status}")
+                
+                if response.status != 200:
+                    error_text = await response.text()
+                    raise Exception(f"Backend processing failed: {response.status} - {error_text}")
+                
+                # Parse the response
+                response_data = await response.json()
+                logging.debug(f"[APP] Response data type: {type(response_data)}")
+                
+                # The response is a JSON string, so we need to parse it
+                if isinstance(response_data, str):
+                    response_obj = json.loads(response_data)
+                    report_content = response_obj["choices"][0]["message"]["content"]
+                else:
+                    report_content = response_data["choices"][0]["message"]["content"]
+                
+                logging.info(f"[APP] Report content received: {len(report_content)} characters")
+                return report_content
+    except aiohttp.ClientError as e:
+        error_msg = f"Communication error with backend: {exception_message(e)}"
+        logging.error(f"[APP] {error_msg}")
+        raise Exception(error_msg)
+    except Exception as e:
+        error_msg = f"Error processing CSV data via backend: {exception_message(e)}"
+        logging.error(f"[APP] {error_msg}")
+        raise Exception(error_msg)
 
-# --- Synchronous Wrapper Function ---
+# --- Synchronous Processing Function ---
 
 def process_and_generate_report(image_file=None, csv_file=None) -> str:
     """
-    Process an image or CSV file and generate a report asynchronously.
-    Handles both image (via feature extraction and analysis) and CSV inputs.
+    Process an image or CSV file and generate a report using the backend API.
+    
+    Args:
+        image_file: Streamlit UploadFile for image
+        csv_file: Streamlit UploadFile for CSV
+        
+    Returns:
+        Generated report content
+        
+    Raises:
+        Exception: If processing fails
     """
     try:
         async def async_process():
+            # Process image file
             if image_file:
                 with st.spinner("Processing image..."):
-                    image_bytes = image_file.read()
-                    features = await get_image_features(image_bytes)
-                    analysis = await get_image_analysis(features)
-                    json_data = json.dumps(analysis)  # Convert analysis JSON to string
+                    # Read the image content
+                    image_content = await read_upload_file(image_file)
+                    
+                    # Validate it's a proper image
+                    validate_image_file(image_file.name, image_content)
+                    
+                    # Process via backend
+                    report_content = await process_image_via_backend(image_content, image_file.name)
+                    return report_content
+            
+            # Process CSV file
             elif csv_file:
-                bytes_data = csv_file.read()
-                df = pd.read_csv(BytesIO(bytes_data))
-                json_data = json.dumps(df.to_dict('records'))
+                with st.spinner("Processing CSV..."):
+                    # Read the CSV content
+                    file_content = await read_upload_file(csv_file)
+                    
+                    # Parse to DataFrame and convert to JSON
+                    df = parse_csv_to_dataframe(file_content)
+                    json_data = dataframe_to_json(df)
+                    
+                    # Process via backend
+                    report_content = await process_csv_via_backend(json_data)
+                    return report_content
             else:
-                raise ValueError("No file provided")
+                raise ValueError("No file provided for processing")
 
-            with st.spinner("Generating report..."):
-                report_content = await generate_report(json_data)
-            return report_content
-
+        # Run the async function and return results
         return asyncio.run(async_process())
+    except ValueError as e:
+        # Handle validation errors
+        error_msg = f"Invalid input: {exception_message(e)}"
+        logging.error(f"[APP] {error_msg}")
+        raise Exception(error_msg)
+    except IOError as e:
+        # Handle file errors
+        error_msg = f"File operation failed: {exception_message(e)}"
+        logging.error(f"[APP] {error_msg}")
+        raise Exception(error_msg)
     except Exception as e:
+        # Handle all other errors
         logging.error(f"[APP] Error in process_and_generate_report: {exception_message(e)}")
         raise
 
 # --- Helper Functions ---
 
-def preview_and_process(file, file_label) -> dict:
-    """Preview the uploaded CSV file and convert it to JSON for API processing."""
-    logging.info(f"[APP] Processing file_label: \n{file_label}")
-    logging.info(f"[APP] File Type: {type(file)}")
-    logging.info(f"[APP] File: \n{file}")
+def preview_and_process_csv(file, file_label) -> Optional[str]:
+    """
+    Preview the uploaded CSV file and convert it to JSON for API processing.
+    
+    Args:
+        file: File object (either UploadFile or file handle)
+        file_label: Label for display purposes
+        
+    Returns:
+        JSON string representation of the CSV data or None if processing fails
+    """
+    logging.info(f"[APP] Processing CSV file: {file_label}")
     st.write(f"Preview of {file_label}:")
+    
     try:
-        bytes_data = file.read()
-        df = pd.read_csv(StringIO(bytes_data.decode("utf-8")))
-        st.write(f"File size: {len(bytes_data)} bytes")
+        # Read file content
+        if hasattr(file, 'read'):
+            # For file-like objects
+            file_content = file.read()
+        else:
+            # For UploadFile objects
+            file_content = asyncio.run(read_upload_file(file))
+        
+        # Parse CSV to DataFrame
+        df = parse_csv_to_dataframe(file_content)
+        
+        # Display preview
+        st.write(f"File size: {len(file_content)} bytes")
         st.write(f"File length: {len(df)} rows")
         st.write(df.head())
-        logging.info(f"Dict of dataframe: \n{df.to_dict('records')}")
-        json_data = json.dumps(df.to_dict('records'))  # Convert to list of dictionaries
-        logging.info(f"[APP] Converted JSON data: \n{json_data}")
+        
+        # Convert to JSON for API
+        json_data = dataframe_to_json(df)
+        logging.info(f"[APP] Converted JSON data size: {len(json_data)} bytes")
+        
         return json_data
+    except ValueError as e:
+        st.error(f"Invalid CSV format: {exception_message(e)}")
+        logging.error(f"[APP] CSV validation error: {exception_message(e)}")
+        return None
     except Exception as e:
-        st.write(f"Unable to show file content or data table: {e}")
-        logging.error(f"[APP] Error processing file: \n{exception_message(e)}")
-        return None  
+        st.error(f"Unable to process CSV file: {exception_message(e)}")
+        logging.error(f"[APP] Error processing CSV file: {exception_message(e)}")
+        return None
 
 def can_submit() -> bool:
-    """Check if enough time has passed since the last submission to prevent spam."""
+    """
+    Check if enough time has passed since the last submission to prevent spam.
+    
+    Returns:
+        True if submission is allowed, False otherwise
+    """
     current_time = time.time()
     last_submit_time = st.session_state.get('last_submit_time', 0)
     cooldown_period = 10  # 10 seconds cooldown
+    
     if current_time - last_submit_time >= cooldown_period:
         st.session_state['last_submit_time'] = current_time
         return True
+    
     remaining_time = cooldown_period - (current_time - last_submit_time)
     st.warning(f"Please wait {remaining_time:.1f} seconds before submitting again.")
-    logging.warning(f"[APP] Submission blocked; last submit was {last_submit_time:.1f}s ago.")
+    logging.warning(f"[APP] Submission blocked; cooldown period: {remaining_time:.1f}s remaining")
     return False
-
-def save_report(data_name: str, report_content: str) -> None:
-    """Save the report content, data name, and timestamp to a JSON file."""
-    now = datetime.datetime.now()
-    timestamp_now = int(now.timestamp())
-    formatted_time = now.strftime('%Y%m%d%H%M%S')
-    report_data = {
-        "data_name": data_name,
-        "report_content": report_content,
-        "created_at": timestamp_now,
-        "created_at_str": now.strftime('%Y-%m-%d %H:%M:%S')
-    }
-
-    os.makedirs("reports", exist_ok=True)
-    filename = f"reports/report_{formatted_time}.json"
-    with open(filename, "w") as f:
-        json.dump(report_data, f, indent=4)
-
-    path = "reports/reports.json"
-    reports_list = []
-    if os.path.exists(path):
-        with open(path, "r") as f:
-            try:
-                reports_list = json.load(f)
-                if not isinstance(reports_list, list):
-                    reports_list = [reports_list]
-            except json.JSONDecodeError:
-                reports_list = []
-    reports_list.append(report_data)
-    with open(path, "w") as f:
-        json.dump(reports_list, f, indent=4)
-    logging.info(f"[APP] Report saved to both {path} and {filename}")
 
 # --- Main Layout ---
 
@@ -287,7 +382,7 @@ with col_upload:
     uploaded_image = st.file_uploader(
         "🩻 Upload your CXR image file (jpg):",
         accept_multiple_files=False,
-        type=["jpg"],
+        type=["jpg", "jpeg"],
         key=f"image_{st.session_state.reset_counter}"
     )
     uploaded_file = st.file_uploader(
@@ -304,15 +399,21 @@ with col_upload:
     # Process selected data source
     json_data = None
     data_name = "Unknown"
+    
     if uploaded_image:
         data_name = uploaded_image.name
+        st.write(f"Selected image: {uploaded_image.name}")
     elif uploaded_file:
         data_name = uploaded_file.name
-        json_data = preview_and_process(uploaded_file, uploaded_file.name)
+        json_data = preview_and_process_csv(uploaded_file, uploaded_file.name)
     elif selected_example:
         data_name = selected_example
-        with open(example_files[selected_example], "rb") as example_file:
-            json_data = preview_and_process(example_file, selected_example)
+        try:
+            with open(example_files[selected_example], "rb") as example_file:
+                json_data = preview_and_process_csv(example_file, selected_example)
+        except Exception as e:
+            st.error(f"Error loading example file: {exception_message(e)}")
+            logging.error(f"[APP] Error loading example file: {exception_message(e)}")
 
     # Submit and Clear buttons side by side
     col_submit, col_clear = st.columns(2)
@@ -331,26 +432,67 @@ with col_upload:
                         elif selected_example:
                             with open(example_files[selected_example], "rb") as example_file:
                                 report_content = process_and_generate_report(csv_file=example_file)
+                                
+                        # Update UI and save report
                         st.session_state.response_content = report_content
                         if report_content:
-                            save_report(data_name, report_content)
+                            try:
+                                # Use file service to save the report
+                                individual_path, master_path = save_report(data_name, report_content)
+                                st.success("Report saved successfully!")
+                                logging.info(f"[APP] Report saved to {individual_path}")
+                            except Exception as e:
+                                st.warning(f"Report generated but could not be saved: {exception_message(e)}")
+                                logging.error(f"[APP] Error saving report: {exception_message(e)}")
                     except Exception as e:
-                        st.error(f"An error occurred: {e}")
+                        st.error(f"An error occurred: {exception_message(e)}")
                         logging.error(f"[APP] Error during processing: {exception_message(e)}")
                 else:
                     st.warning("Please upload or select a file.")
+    
     with col_clear:
         if st.button("Clear"):
             st.session_state.reset_counter += 1
             st.session_state.response_content = None
             logging.info("[APP] Cleared uploaded data and report.")
+            st.experimental_rerun()
        
 with col_report:
     st.markdown("### Report (draft)")
+    
+    # Display current report
     if st.session_state.response_content:
-        logging.info(f"[APP] Displaying report: {st.session_state.response_content}")
+        logging.info(f"[APP] Displaying report ({len(st.session_state.response_content)} chars)")
         tab_markdown, tab_text = st.tabs(["Markdown", "Text"])
+        
         with tab_markdown:
             st.markdown(st.session_state.response_content)
+        
         with tab_text:
             st.text_area("Generated Report", st.session_state.response_content, height=300)
+    
+    # Add section for recent reports
+    with st.expander("Recent Reports"):
+        try:
+            recent_reports = get_recent_reports(limit=5)
+            if recent_reports:
+                for idx, report in enumerate(recent_reports):
+                    report_date = report.get('created_at_str', 'Unknown date')
+                    report_name = report.get('data_name', 'Unknown file')
+                    
+                    col1, col2 = st.columns([3, 1])
+                    with col1:
+                        st.markdown(f"**{idx+1}. {report_name}**")
+                        st.caption(f"Created: {report_date}")
+                    
+                    with col2:
+                        if st.button(f"View: view_report_{idx}"):
+                            st.session_state.response_content = report.get('report_content', '')
+                            st.experimental_rerun()
+                    
+                    st.divider()
+            else:
+                st.write("No previous reports found.")
+        except Exception as e:
+            st.write(f"Could not load recent reports: {exception_message(e)}")
+            logging.error(f"[APP] Error loading recent reports: {exception_message(e)}")
