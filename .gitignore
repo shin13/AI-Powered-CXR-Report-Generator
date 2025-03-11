@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 *.so
 .Python
+env/
 build/
 develop-eggs/
 dist/
@@ -15,111 +16,37 @@ lib64/
 parts/
 sdist/
 var/
-wheels/
-share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-MANIFEST
-
-# Distribution / packaging
-PyInstaller/
-*.manifest
-*.spec
-
-# Testing
-htmlcov/
-.tox/
-.nox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
 .pytest_cache/
-cover/
+.coverage
+htmlcov/
+.venv/
 
-# Environments
+# Environment files
 .env
-.env.*
-!.env.example
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-.python-version
+.env.development
+.env.production
+.env.local
 
-# Logs and outputs
-logs/
-*.log
-report*.txt
-reports/
-
-# IDE & Editors
+# IDE files
 .idea/
 .vscode/
-*.sublime-project
-*.sublime-workspace
-.spyderproject
-.spyproject
-.ropeproject
-[._]*.s[a-v][a-z]
-[._]*.sw[a-p]
-[._]s[a-rt-v][a-z]
-[._]ss[a-gi-z]
-[._]sw[a-p]
-Session.vim
+*.swp
+*.swo
 
-# OS specific files
+# Project-specific
+storage/temp/
+storage/images/*
+!storage/images/.gitkeep
+storage/cases/*
+!storage/cases/.gitkeep
+logs/*
+!logs/.gitkeep
+reports/*
+!reports/.gitkeep
+
+# OS-specific
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
-desktop.ini
-
-# API keys and secrets
-*.pem
-*.key
-*.cert
-credentials.json
-.aws/
-
-# Data files and samples
-# Uncomment if you want to ignore sample images
-*.jpg
-*.jpeg
-*.png
-# Uncomment if you don't want to version large datasets
-*.csv 
-
-# Documentation
-docs/_build/
-docs/_build/doctrees
-docs/_build/html
-/site
-
-# JavaScript/Node (if applicable)
-node_modules/
-jspm_packages/
-bower_components/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.next/
-.nuxt/
-.serverless/
-
-# Docker
-docker-compose.override.yml
-
-# Project specific
-# Add any very large sample files here
-# data/large_samples/

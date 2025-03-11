@@ -1,5 +1,5 @@
 import os
-from typing import List, Union
+from typing import List, Union, Optional
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     DEBUG: bool = False
 
     # Backend Settings
+    ROOT_PATH: str
+    API_URL: str
     BACKEND_URL: str
 
     # AI Service Settings
@@ -29,6 +31,16 @@ class Settings(BaseSettings):
     CXR_LINEAR_PROBE_ENDPOINT: str
     AUTH_USERNAME: str
     AUTH_PASSWORD: str
+
+    # File Service Settings
+    REPORTS_DIR: str = "reports"
+    MAX_IMAGE_SIZE_MB: int # 10 MB
+    ALLOWED_IMAGE_EXTENSIONS: List[str] = [".jpg", ".jpeg", ".png"]
+    
+    # Authentication Settings (for the web application)
+    APP_USERNAME: Optional[str] = None
+    APP_PASSWORD: Optional[str] = None
+    JWT_SECRET: Optional[str] = None
 
     class Config:
         env_file = ".env"

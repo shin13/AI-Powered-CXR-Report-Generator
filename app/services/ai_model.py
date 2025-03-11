@@ -6,7 +6,7 @@ import json
 import logging
 from typing import Dict, List, Any
 
-from app.config import settings
+from app.config.config import settings
 from app.middleware.exception import exception_message
 from app.middleware.logger import setup_logger
 
