@@ -10,5 +10,119 @@
         "report_content": "This is a test report content",
         "created_at": 1741302280,
         "created_at_str": "2025-03-07 07:04:40"
+    },
+    {
+        "data_name": "cxr_image.jpeg",
+        "report_content": "{\"id\":\"chatcmpl-B9PYgvjprUHYNZDwPKsvXiHQMZMQj\",\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"logprobs\":null,\"message\":{\"content\":\"1. **Organ**\\n\\n    **Lung:**\\n    Ground glass opacities are noted in the middle lung.\\n    Ground glass opacities are suspected.\\n    Reticulations traction bronchiectasis honeycombing is suspected in the lower lung.\\n    Fibrosis change is suspected in the right lung.\\n    Emphysematous changes are noted bilaterally.\\n    \\n    **Mediastinum:**\\n    Prominence of left hilar shadows is suspected.\\n    Bulging of the left mediastinum is noted.\\n\\n    **Bones:**\\n    No significant findings.\\n\\n    **Cardiac silhouette:**\\n    The cardiovascular silhouette is within normal limits.\\n\\n2. **Diagnosis**\\n\\n    No evidence of pleural effusion or pneumothorax.\\n\\n3. **Catheter and Implant**\\n\\n    No iatrogenic catheter or implant is noted.\",\"refusal\":null,\"role\":\"assistant\",\"audio\":null,\"function_call\":null,\"tool_calls\":null}}],\"created\":1741582898,\"model\":\"gpt-4o-mini-2024-07-18\",\"object\":\"chat.completion\",\"service_tier\":\"default\",\"system_fingerprint\":\"fp_06737a9306\",\"usage\":{\"completion_tokens\":171,\"prompt_tokens\":3170,\"total_tokens\":3341,\"completion_tokens_details\":{\"accepted_prediction_tokens\":0,\"audio_tokens\":0,\"reasoning_tokens\":0,\"rejected_prediction_tokens\":0},\"prompt_tokens_details\":{\"audio_tokens\":0,\"cached_tokens\":0}}}",
+        "created_at": 1741582899,
+        "created_at_str": "2025-03-10 13:01:39"
+    },
+    {
+        "data_name": "cxr_image.jpeg",
+        "report_content": "1. **Organ**\n\n    **Lung:**\n    Ground glass opacities are noted in the middle lung.\n    Ground glass opacities are suspected.\n    Reticulations traction bronchiectasis honeycombing is suspected in the lower lung.\n    Fibrosis change is noted in the right lung.\n    Emphysematous changes are noted bilaterally.\n    \n    **Mediastinum:**\n    Prominence of left hilar shadows is suspected.\n    Bulging of the left mediastinum is noted.\n\n    **Bones:**\n    No significant findings.\n\n    **Cardiac silhouette:**\n    Cardiomegaly is noted.\n\n2. **Diagnosis**\n\n    No evidence of pleural effusion or pneumothorax.\n\n3. **Catheter and Implant**\n\n    No iatrogenic catheter or implant is noted.",
+        "created_at": 1741584430,
+        "created_at_str": "2025-03-10 13:27:10"
+    },
+    {
+        "data_name": "cxr_image.jpeg",
+        "report_content": "1. **Organ**\n\n    **Lung:**\n    Ground glass opacities are noted in the middle lung.\n    Ground glass opacities are suspected.\n    Reticulations traction bronchiectasis honeycombing is suspected in the lower lung.\n    Fibrosis change is noted in the right lung.\n    Emphysematous changes are noted bilaterally.\n    \n    **Mediastinum:**\n    Prominence of left hilar shadows is suspected.\n    Bulging of the left mediastinum is noted.\n\n    **Bones:**\n    No significant findings.\n\n    **Cardiac silhouette:**\n    Cardiomegaly is noted.\n\n2. **Diagnosis**\n\n    No evidence of pleural effusion or pneumothorax.\n\n3. **Catheter and Implant**\n\n    No iatrogenic catheter or implant is noted.",
+        "created_at": 1741584430,
+        "created_at_str": "2025-03-10 13:27:10"
+    },
+    {
+        "data_name": "NG-tube-at-bottom-of-oesophagus.jpeg",
+        "report_content": "1. **Organ**\n\n    **Lung:**\n    Ground glass opacities are noted bilaterally.\n    Peribronchial wall thickening is suspected in the upper lung.\n    Pneumothorax is suspected bilaterally.\n\n    **Mediastinum:**\n    No significant abnormality.\n\n    **Bones:**\n    No significant abnormality.\n\n    **Cardiac silhouette:**\n    The cardiovascular silhouette is within normal limit.\n\n2. **Diagnosis**\n\n    Pneumothorax is identified bilaterally.\n    Further investigation is suggested for ground glass opacities.\n\n3. **Catheter and Implant**\n\n    No iatrogenic catheter or implant is noted.",
+        "created_at": 1741584827,
+        "created_at_str": "2025-03-10 13:33:47"
+    },
+    {
+        "data_name": "NG-tube-at-bottom-of-oesophagus.jpeg",
+        "report_content": "1. **Organ**\n\n    **Lung:**\n    Ground glass opacities are noted bilaterally.\n    Peribronchial wall thickening is suspected in the upper lung.\n    Pneumothorax is suspected bilaterally.\n\n    **Mediastinum:**\n    No significant abnormality.\n\n    **Bones:**\n    No significant abnormality.\n\n    **Cardiac silhouette:**\n    The cardiovascular silhouette is within normal limit.\n\n2. **Diagnosis**\n\n    Pneumothorax is identified bilaterally.\n    Further investigation is suggested for ground glass opacities.\n\n3. **Catheter and Implant**\n\n    No iatrogenic catheter or implant is noted.",
+        "created_at": 1741584827,
+        "created_at_str": "2025-03-10 13:33:47"
+    },
+    {
+        "data_name": "NG-tube-at-bottom-of-oesophagus.jpeg",
+        "report_content": "1. **Organ**\n\n    **Lung:**\n    Ground glass opacities are noted bilaterally.\n    Peribronchial wall thickening is suspected in the upper lung.\n    Pneumothorax is suspected bilaterally.\n\n    **Mediastinum:**\n    No significant abnormality.\n\n    **Bones:**\n    No significant abnormality.\n\n    **Cardiac silhouette:**\n    The cardiovascular silhouette is within normal limit.\n\n2. **Diagnosis**\n\n    Pneumothorax is identified bilaterally.\n    Ground glass opacities are suspected.\n\n3. **Catheter and Implant**\n\n    No iatrogenic catheter or implant is noted.",
+        "created_at": 1741586776,
+        "created_at_str": "2025-03-10 14:06:16"
+    },
+    {
+        "data_name": "NG-tube-at-bottom-of-oesophagus.jpeg",
+        "report_content": "1. **Organ**\n\n    **Lung:**\n    Ground glass opacities are noted bilaterally.\n    Peribronchial wall thickening is suspected in the upper lung.\n    Pneumothorax is suspected bilaterally.\n\n    **Mediastinum:**\n    No significant abnormality.\n\n    **Bones:**\n    No significant abnormality.\n\n    **Cardiac silhouette:**\n    The cardiovascular silhouette is within normal limit.\n\n2. **Diagnosis**\n\n    Pneumothorax is identified bilaterally.\n    Ground glass opacities are suspected.\n\n3. **Catheter and Implant**\n\n    No iatrogenic catheter or implant is noted.",
+        "created_at": 1741586776,
+        "created_at_str": "2025-03-10 14:06:16"
+    },
+    {
+        "data_name": "NG-tube-at-bottom-of-oesophagus.jpeg",
+        "report_content": "1. **Organ**\n\n    **Lung:**\n    Ground glass opacities are noted.\n    Peribronchial wall thickening is suspected.\n    Pneumothorax is identified.\n\n    **Mediastinum:**\n    No significant abnormality.\n\n    **Bones:**\n    No definite fracture line or focal nodule in bone structures could be seen.\n\n    **Cardiac silhouette:**\n    The cardiovascular silhouette is within normal limit.\n\n2. **Diagnosis**\n\n    Pneumothorax is identified.\n    Pneumothorax is suspected.\n\n3. **Catheter and Implant**\n\n    No iatrogenic catheter or implant is noted.",
+        "created_at": 1741588472,
+        "created_at_str": "2025-03-10 14:34:32"
+    },
+    {
+        "data_name": "NG-tube-at-bottom-of-oesophagus.jpeg",
+        "report_content": "1. **Organ**\n\n    **Lung:**\n    Ground glass opacities are noted.\n    Peribronchial wall thickening is suspected.\n    Pneumothorax is identified.\n\n    **Mediastinum:**\n    No significant abnormality.\n\n    **Bones:**\n    No definite fracture line or focal nodule in bone structures could be seen.\n\n    **Cardiac silhouette:**\n    The cardiovascular silhouette is within normal limit.\n\n2. **Diagnosis**\n\n    Pneumothorax is identified.\n    Pneumothorax is suspected.\n\n3. **Catheter and Implant**\n\n    No iatrogenic catheter or implant is noted.",
+        "created_at": 1741588472,
+        "created_at_str": "2025-03-10 14:34:32"
+    },
+    {
+        "data_name": "NG-tube-at-bottom-of-oesophagus.jpeg",
+        "report_content": "1. **Organ**\n\n    **Lung:**\n    Ground glass opacities are noted.\n    Peribronchial wall thickening is suspected in the upper lung.\n    Pneumothorax is suspected.\n\n    **Mediastinum:**\n    No significant abnormality.\n\n    **Bones:**\n    No significant abnormality.\n\n    **Cardiac silhouette:**\n    No significant abnormality.\n\n2. **Diagnosis**\n\n    Pneumothorax is identified.\n    Pneumomediastinum is suspected.\n\n3. **Catheter and Implant**\n\n    S/P endotracheal intubation.",
+        "created_at": 1741656404,
+        "created_at_str": "2025-03-11 09:26:44"
+    },
+    {
+        "data_name": "NG-tube-at-bottom-of-oesophagus.jpeg",
+        "report_content": "1. **Organ**\n\n    **Lung:**\n    Ground glass opacities are noted.\n    Peribronchial wall thickening is suspected in the upper lung.\n    Pneumothorax is suspected.\n\n    **Mediastinum:**\n    No significant abnormality.\n\n    **Bones:**\n    No significant abnormality.\n\n    **Cardiac silhouette:**\n    No significant abnormality.\n\n2. **Diagnosis**\n\n    Pneumothorax is identified.\n    Pneumomediastinum is suspected.\n\n3. **Catheter and Implant**\n\n    S/P endotracheal intubation.",
+        "created_at": 1741656404,
+        "created_at_str": "2025-03-11 09:26:44"
+    },
+    {
+        "data_name": "cxr_image.jpeg",
+        "report_content": "1. **Organ**\n\n    **Lung:**\n    Ground glass opacities are noted in the middle zone of the lungs.  \n    Ground glass opacities are also present in the left upper lung.  \n    Further investigation is suggested.  \n    Reticulations traction bronchiectasis honeycombing is suspected in the lower lung.  \n    Fibrosis change is noted bilaterally.  \n    Further evaluation is recommended.  \n    Pleural thickening is suspected bilaterally.  \n    Further assessment is advised.  \n    Nodular ground glass opacity is noted in the lower lung.  \n    Further investigation is suggested.  \n    Emphysematous changes are noted bilaterally.  \n    Further evaluation is recommended.  \n\n    **Mediastinum:**\n    Prominence of left hilar shadows is suspected.  \n    Bulging of the left mediastinum is noted.  \n    Further investigation is suggested.  \n\n    **Bones:**\n    No definite fracture line or focal nodule in bone structures could be seen.\n\n    **Cardiac silhouette:**\n    The cardiovascular silhouette is within normal limit.\n\n2. **Diagnosis**\n\n    No evidence of pleural effusion or pneumothorax.\n\n3. **Catheter and Implant**\n\n    No iatrogenic catheter or implant is noted.",
+        "created_at": 1741656666,
+        "created_at_str": "2025-03-11 09:31:06"
+    },
+    {
+        "data_name": "cxr_image.jpeg",
+        "report_content": "1. **Organ**\n\n    **Lung:**\n    Ground glass opacities are noted in the middle zone of the lungs.  \n    Ground glass opacities are also present in the left upper lung.  \n    Further investigation is suggested.  \n    Reticulations traction bronchiectasis honeycombing is suspected in the lower lung.  \n    Fibrosis change is noted bilaterally.  \n    Further evaluation is recommended.  \n    Pleural thickening is suspected bilaterally.  \n    Further assessment is advised.  \n    Nodular ground glass opacity is noted in the lower lung.  \n    Further investigation is suggested.  \n    Emphysematous changes are noted bilaterally.  \n    Further evaluation is recommended.  \n\n    **Mediastinum:**\n    Prominence of left hilar shadows is suspected.  \n    Bulging of the left mediastinum is noted.  \n    Further investigation is suggested.  \n\n    **Bones:**\n    No definite fracture line or focal nodule in bone structures could be seen.\n\n    **Cardiac silhouette:**\n    The cardiovascular silhouette is within normal limit.\n\n2. **Diagnosis**\n\n    No evidence of pleural effusion or pneumothorax.\n\n3. **Catheter and Implant**\n\n    No iatrogenic catheter or implant is noted.",
+        "created_at": 1741656666,
+        "created_at_str": "2025-03-11 09:31:06"
+    },
+    {
+        "data_name": "NG-tube-at-bottom-of-oesophagus.jpeg",
+        "report_content": "1. **Organ**\n\n    **Lung:**\n    Ground glass opacities are noted.\n    Peribronchial wall thickening is suspected in the upper lung.\n    Pneumothorax is suspected in the right lung.\n    Pneumothorax is suspected in the left lung.\n    Pneumothorax is suspected bilaterally.\n\n    **Mediastinum:**\n    No significant abnormality.\n\n    **Bones:**\n    No significant abnormality.\n\n    **Cardiac silhouette:**\n    No significant abnormality.\n\n2. **Diagnosis**\n\n    Pneumothorax is identified bilaterally.\n    Pneumothorax is suspected.\n\n3. **Catheter and Implant**\n\n    S/P endotracheal intubation.",
+        "created_at": 1741657556,
+        "created_at_str": "2025-03-11 09:45:56"
+    },
+    {
+        "data_name": "NG-tube-at-bottom-of-oesophagus.jpeg",
+        "report_content": "1. **Organ**\n\n    **Lung:**\n    Ground glass opacities are noted.\n    Peribronchial wall thickening is suspected in the upper lung.\n    Pneumothorax is suspected in the right lung.\n    Pneumothorax is suspected in the left lung.\n    Pneumothorax is suspected bilaterally.\n\n    **Mediastinum:**\n    No significant abnormality.\n\n    **Bones:**\n    No significant abnormality.\n\n    **Cardiac silhouette:**\n    No significant abnormality.\n\n2. **Diagnosis**\n\n    Pneumothorax is identified bilaterally.\n    Pneumothorax is suspected.\n\n3. **Catheter and Implant**\n\n    S/P endotracheal intubation.",
+        "created_at": 1741657556,
+        "created_at_str": "2025-03-11 09:45:56"
+    },
+    {
+        "data_name": "NG-tube-at-bottom-of-oesophagus.jpeg",
+        "report_content": "1. **Organ**\n\n    **Lung:**\n    Ground glass opacities are noted.\n    Peribronchial wall thickening is suspected in the upper lung.\n    Pneumothorax is suspected in the right lung.\n    Pneumothorax is suspected in the left lung.\n    Pneumothorax is suspected bilaterally.\n\n    **Mediastinum:**\n    No significant abnormality.\n\n    **Bones:**\n    No significant abnormality.\n\n    **Cardiac silhouette:**\n    No significant abnormality.\n\n2. **Diagnosis**\n\n    Pneumothorax is identified.\n    Further investigation is suggested for ground glass opacities and peribronchial wall thickening.\n\n3. **Catheter and Implant**\n\n    S/P endotracheal intubation.",
+        "created_at": 1741657681,
+        "created_at_str": "2025-03-11 09:48:01"
+    },
+    {
+        "data_name": "NG-tube-at-bottom-of-oesophagus.jpeg",
+        "report_content": "1. **Organ**\n\n    **Lung:**\n    Ground glass opacities are noted.\n    Peribronchial wall thickening is suspected in the upper lung.\n    Pneumothorax is suspected in the right lung.\n    Pneumothorax is suspected in the left lung.\n    Pneumothorax is suspected bilaterally.\n\n    **Mediastinum:**\n    No significant abnormality.\n\n    **Bones:**\n    No significant abnormality.\n\n    **Cardiac silhouette:**\n    No significant abnormality.\n\n2. **Diagnosis**\n\n    Pneumothorax is identified.\n    Further investigation is suggested for ground glass opacities and peribronchial wall thickening.\n\n3. **Catheter and Implant**\n\n    S/P endotracheal intubation.",
+        "created_at": 1741657681,
+        "created_at_str": "2025-03-11 09:48:01"
+    },
+    {
+        "data_name": "cxr_image.jpeg",
+        "report_content": "1. **Organ**\n\n    **Lung:**\n    Ground glass opacities are noted in the middle zone of the lungs.  \n    Ground glass opacities are also present in the left upper lung.  \n    Further investigation is suggested.  \n    Reticulations traction bronchiectasis honeycombing is suspected in the lower lung.  \n    Fibrosis change is noted bilaterally.  \n    Emphysematous changes are present bilaterally.  \n\n    **Mediastinum:**\n    Prominence of left hilar shadows is suspected.  \n    Bulging of the left mediastinum is noted.  \n\n    **Bones:**\n    No definite fracture line or focal nodule in bone structures could be seen.\n\n    **Cardiac silhouette:**\n    The cardiovascular silhouette is within normal limit.\n\n2. **Diagnosis**\n\n    No evidence of pleural effusion or pneumothorax.\n\n3. **Catheter and Implant**\n\n    No iatrogenic catheter or implant is noted.",
+        "created_at": 1741658941,
+        "created_at_str": "2025-03-11 10:09:01"
+    },
+    {
+        "data_name": "cxr_image.jpeg",
+        "report_content": "1. **Organ**\n\n    **Lung:**\n    Ground glass opacities are noted in the middle zone of the lungs.  \n    Ground glass opacities are also present in the left upper lung.  \n    Further investigation is suggested.  \n    Reticulations traction bronchiectasis honeycombing is suspected in the lower lung.  \n    Fibrosis change is noted bilaterally.  \n    Emphysematous changes are present bilaterally.  \n\n    **Mediastinum:**\n    Prominence of left hilar shadows is suspected.  \n    Bulging of the left mediastinum is noted.  \n\n    **Bones:**\n    No definite fracture line or focal nodule in bone structures could be seen.\n\n    **Cardiac silhouette:**\n    The cardiovascular silhouette is within normal limit.\n\n2. **Diagnosis**\n\n    No evidence of pleural effusion or pneumothorax.\n\n3. **Catheter and Implant**\n\n    No iatrogenic catheter or implant is noted.",
+        "created_at": 1741658941,
+        "created_at_str": "2025-03-11 10:09:01"
     }
 ]
